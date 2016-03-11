@@ -392,6 +392,7 @@ namespace WCVariantsGenerator
                 {
                     sw.WriteLine(sb.ToString());
                 }
+                MessageBox.Show("Generated Missing Records");
             }
             else
             {
