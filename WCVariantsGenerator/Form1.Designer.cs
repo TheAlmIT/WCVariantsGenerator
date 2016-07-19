@@ -49,6 +49,11 @@
             this.btnVariantsFileOpen = new System.Windows.Forms.Button();
             this.txtVariantsFile = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.btnUploadVendorFile = new System.Windows.Forms.Button();
+            this.txtVendorFile = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.btnGenerateRaw = new System.Windows.Forms.Button();
+            this.dlgVendorFile = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // dlgOpenCSV
@@ -58,22 +63,22 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(27, 14);
+            this.label1.Location = new System.Drawing.Point(28, 106);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(47, 13);
+            this.label1.Size = new System.Drawing.Size(48, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "CSV File";
+            this.label1.Text = "Raw File";
             // 
             // txtFileName
             // 
-            this.txtFileName.Location = new System.Drawing.Point(80, 13);
+            this.txtFileName.Location = new System.Drawing.Point(81, 105);
             this.txtFileName.Name = "txtFileName";
             this.txtFileName.Size = new System.Drawing.Size(381, 20);
             this.txtFileName.TabIndex = 1;
             // 
             // brnOpenCSV
             // 
-            this.brnOpenCSV.Location = new System.Drawing.Point(465, 12);
+            this.brnOpenCSV.Location = new System.Drawing.Point(466, 104);
             this.brnOpenCSV.Name = "brnOpenCSV";
             this.brnOpenCSV.Size = new System.Drawing.Size(75, 23);
             this.brnOpenCSV.TabIndex = 2;
@@ -83,7 +88,7 @@
             // 
             // btnParentProds
             // 
-            this.btnParentProds.Location = new System.Drawing.Point(80, 39);
+            this.btnParentProds.Location = new System.Drawing.Point(81, 131);
             this.btnParentProds.Name = "btnParentProds";
             this.btnParentProds.Size = new System.Drawing.Size(75, 47);
             this.btnParentProds.TabIndex = 3;
@@ -93,7 +98,7 @@
             // 
             // btnReset
             // 
-            this.btnReset.Location = new System.Drawing.Point(386, 39);
+            this.btnReset.Location = new System.Drawing.Point(387, 131);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(75, 47);
             this.btnReset.TabIndex = 4;
@@ -103,7 +108,7 @@
             // 
             // btnVariationProds
             // 
-            this.btnVariationProds.Location = new System.Drawing.Point(156, 39);
+            this.btnVariationProds.Location = new System.Drawing.Point(157, 131);
             this.btnVariationProds.Name = "btnVariationProds";
             this.btnVariationProds.Size = new System.Drawing.Size(75, 47);
             this.btnVariationProds.TabIndex = 5;
@@ -113,7 +118,7 @@
             // 
             // btnSimpleProds
             // 
-            this.btnSimpleProds.Location = new System.Drawing.Point(233, 39);
+            this.btnSimpleProds.Location = new System.Drawing.Point(234, 131);
             this.btnSimpleProds.Name = "btnSimpleProds";
             this.btnSimpleProds.Size = new System.Drawing.Size(75, 47);
             this.btnSimpleProds.TabIndex = 6;
@@ -123,7 +128,7 @@
             // 
             // btnMissingSKUs
             // 
-            this.btnMissingSKUs.Location = new System.Drawing.Point(310, 39);
+            this.btnMissingSKUs.Location = new System.Drawing.Point(311, 131);
             this.btnMissingSKUs.Name = "btnMissingSKUs";
             this.btnMissingSKUs.Size = new System.Drawing.Size(75, 47);
             this.btnMissingSKUs.TabIndex = 7;
@@ -133,7 +138,7 @@
             // 
             // btnImageCSVOpen
             // 
-            this.btnImageCSVOpen.Location = new System.Drawing.Point(465, 137);
+            this.btnImageCSVOpen.Location = new System.Drawing.Point(466, 229);
             this.btnImageCSVOpen.Name = "btnImageCSVOpen";
             this.btnImageCSVOpen.Size = new System.Drawing.Size(75, 23);
             this.btnImageCSVOpen.TabIndex = 10;
@@ -143,7 +148,7 @@
             // 
             // txtImageSKUFileName
             // 
-            this.txtImageSKUFileName.Location = new System.Drawing.Point(80, 138);
+            this.txtImageSKUFileName.Location = new System.Drawing.Point(81, 230);
             this.txtImageSKUFileName.Name = "txtImageSKUFileName";
             this.txtImageSKUFileName.Size = new System.Drawing.Size(381, 20);
             this.txtImageSKUFileName.TabIndex = 9;
@@ -151,7 +156,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 139);
+            this.label2.Location = new System.Drawing.Point(4, 231);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(80, 13);
             this.label2.TabIndex = 8;
@@ -160,7 +165,7 @@
             // 
             // btnGenerateImgCSV
             // 
-            this.btnGenerateImgCSV.Location = new System.Drawing.Point(80, 233);
+            this.btnGenerateImgCSV.Location = new System.Drawing.Point(81, 325);
             this.btnGenerateImgCSV.Name = "btnGenerateImgCSV";
             this.btnGenerateImgCSV.Size = new System.Drawing.Size(75, 47);
             this.btnGenerateImgCSV.TabIndex = 11;
@@ -171,7 +176,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(161, 233);
+            this.label3.Location = new System.Drawing.Point(162, 325);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(60, 13);
             this.label3.TabIndex = 12;
@@ -180,7 +185,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(161, 267);
+            this.label4.Location = new System.Drawing.Point(162, 359);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(79, 13);
             this.label4.TabIndex = 13;
@@ -188,7 +193,7 @@
             // 
             // btnSimpleFileOpen
             // 
-            this.btnSimpleFileOpen.Location = new System.Drawing.Point(465, 166);
+            this.btnSimpleFileOpen.Location = new System.Drawing.Point(466, 258);
             this.btnSimpleFileOpen.Name = "btnSimpleFileOpen";
             this.btnSimpleFileOpen.Size = new System.Drawing.Size(75, 23);
             this.btnSimpleFileOpen.TabIndex = 16;
@@ -198,7 +203,7 @@
             // 
             // txtSimpleProdFile
             // 
-            this.txtSimpleProdFile.Location = new System.Drawing.Point(80, 167);
+            this.txtSimpleProdFile.Location = new System.Drawing.Point(81, 259);
             this.txtSimpleProdFile.Name = "txtSimpleProdFile";
             this.txtSimpleProdFile.Size = new System.Drawing.Size(381, 20);
             this.txtSimpleProdFile.TabIndex = 15;
@@ -206,7 +211,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 168);
+            this.label5.Location = new System.Drawing.Point(4, 260);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(68, 13);
             this.label5.TabIndex = 14;
@@ -214,7 +219,7 @@
             // 
             // btnVariantsFileOpen
             // 
-            this.btnVariantsFileOpen.Location = new System.Drawing.Point(465, 195);
+            this.btnVariantsFileOpen.Location = new System.Drawing.Point(466, 287);
             this.btnVariantsFileOpen.Name = "btnVariantsFileOpen";
             this.btnVariantsFileOpen.Size = new System.Drawing.Size(75, 23);
             this.btnVariantsFileOpen.TabIndex = 19;
@@ -224,7 +229,7 @@
             // 
             // txtVariantsFile
             // 
-            this.txtVariantsFile.Location = new System.Drawing.Point(80, 196);
+            this.txtVariantsFile.Location = new System.Drawing.Point(81, 288);
             this.txtVariantsFile.Name = "txtVariantsFile";
             this.txtVariantsFile.Size = new System.Drawing.Size(381, 20);
             this.txtVariantsFile.TabIndex = 18;
@@ -232,17 +237,61 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 197);
+            this.label6.Location = new System.Drawing.Point(4, 289);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(64, 13);
             this.label6.TabIndex = 17;
             this.label6.Text = "Variants File";
             // 
+            // btnUploadVendorFile
+            // 
+            this.btnUploadVendorFile.Location = new System.Drawing.Point(466, 53);
+            this.btnUploadVendorFile.Name = "btnUploadVendorFile";
+            this.btnUploadVendorFile.Size = new System.Drawing.Size(75, 23);
+            this.btnUploadVendorFile.TabIndex = 22;
+            this.btnUploadVendorFile.Text = "Open";
+            this.btnUploadVendorFile.UseVisualStyleBackColor = true;
+            this.btnUploadVendorFile.Click += new System.EventHandler(this.btnUploadVendorFile_Click);
+            // 
+            // txtVendorFile
+            // 
+            this.txtVendorFile.Location = new System.Drawing.Point(81, 54);
+            this.txtVendorFile.Name = "txtVendorFile";
+            this.txtVendorFile.Size = new System.Drawing.Size(381, 20);
+            this.txtVendorFile.TabIndex = 21;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(21, 55);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(60, 13);
+            this.label7.TabIndex = 20;
+            this.label7.Text = "Vendor File";
+            // 
+            // btnGenerateRaw
+            // 
+            this.btnGenerateRaw.Location = new System.Drawing.Point(541, 53);
+            this.btnGenerateRaw.Name = "btnGenerateRaw";
+            this.btnGenerateRaw.Size = new System.Drawing.Size(91, 23);
+            this.btnGenerateRaw.TabIndex = 23;
+            this.btnGenerateRaw.Text = "Generate Raw";
+            this.btnGenerateRaw.UseVisualStyleBackColor = true;
+            this.btnGenerateRaw.Click += new System.EventHandler(this.btnGenerateRaw_Click);
+            // 
+            // dlgVendorFile
+            // 
+            this.dlgVendorFile.FileName = "openFileDialog1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(599, 294);
+            this.ClientSize = new System.Drawing.Size(694, 384);
+            this.Controls.Add(this.btnGenerateRaw);
+            this.Controls.Add(this.btnUploadVendorFile);
+            this.Controls.Add(this.txtVendorFile);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.btnVariantsFileOpen);
             this.Controls.Add(this.txtVariantsFile);
             this.Controls.Add(this.label6);
@@ -293,6 +342,11 @@
         private System.Windows.Forms.Button btnVariantsFileOpen;
         private System.Windows.Forms.TextBox txtVariantsFile;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btnUploadVendorFile;
+        private System.Windows.Forms.TextBox txtVendorFile;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button btnGenerateRaw;
+        private System.Windows.Forms.OpenFileDialog dlgVendorFile;
     }
 }
 

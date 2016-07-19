@@ -60,7 +60,7 @@ namespace WCVariantsGenerator
             }
             if (originalTable.Rows.Count > 0)
             {
-                originalTable.DefaultView.Sort = "post_name ASC";
+                originalTable.DefaultView.Sort = "post_name ASC, stock desc";
                 originalTable = originalTable.DefaultView.ToTable();
                 DataTable parentDT = originalTable.Copy();
                 DataTable finalParentDT = originalTable.Clone();
@@ -216,6 +216,7 @@ namespace WCVariantsGenerator
                                 drs[0]["attribute:SIZE"] = string.Empty;
                                 drs[0]["attribute:pa_size"] = string.Empty;
                                 drs[0]["parent_sku"] = string.Empty;
+                                drs[0]["manage_stock"] = "yes";
                                 drs[0]["attribute_data:pa_size"] = string.Empty;
                                 drs[0]["sale_price"] = string.Empty;
                                 finalSimpleProdDT.ImportRow(drs[0]);
@@ -244,6 +245,10 @@ namespace WCVariantsGenerator
                     {
                         DataColumn datecolumn = new DataColumn(column);
                         datecolumn.AllowDBNull = true;
+                        if (column == "stock")
+                        {
+                            datecolumn.DataType = Type.GetType("System.Int32");
+                        }
                         csvData.Columns.Add(datecolumn);
                     }
 
@@ -573,5 +578,205 @@ namespace WCVariantsGenerator
                 txtVariantsFile.Text = dlgOpenCSV.FileName;
             }
         }
+
+        private void btnUploadVendorFile_Click(object sender, EventArgs e)
+        {
+            dlgVendorFile.Filter = "CSVFiles|*.csv";
+            DialogResult dr = dlgVendorFile.ShowDialog();
+            if (dr == System.Windows.Forms.DialogResult.OK)
+            {
+                txtVendorFile.Text = dlgVendorFile.FileName;
+            }
+
+        }
+
+        private void btnGenerateRaw_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(txtVendorFile.Text))
+            {
+                DataTable rawTable = GetDataTableFromCSVFile(txtFileName.Text);
+                string brandMasterFileName = System.Configuration.ConfigurationManager.AppSettings["BrandMasterFile"];
+                DataTable brandsTable = new DataTable();
+                if (String.IsNullOrEmpty(brandMasterFileName))
+                {
+                    brandsTable = GetDataTableFromCSVFile(brandMasterFileName);
+                }
+                string rangeLookupMasterFileName = System.Configuration.ConfigurationManager.AppSettings["RangeLookupMasterFileName"];
+                DataTable RangeLookupMasterTable = new DataTable();
+                if (String.IsNullOrEmpty(rangeLookupMasterFileName))
+                {
+                    RangeLookupMasterTable = GetDataTableFromCSVFile(rangeLookupMasterFileName);
+                }
+                string productNamePhraseFileName = System.Configuration.ConfigurationManager.AppSettings["ProductNamePhraseFileName"];
+                DataTable productNamePhraseTable = new DataTable();
+                if (String.IsNullOrEmpty(productNamePhraseFileName))
+                {
+                    productNamePhraseTable = GetDataTableFromCSVFile(productNamePhraseFileName);
+                }
+                string packingSizeLookUpFileName = System.Configuration.ConfigurationManager.AppSettings["PackingSizeLookUpFileName"];
+                DataTable packingSizeLookUpTable = new DataTable();
+                if (String.IsNullOrEmpty(packingSizeLookUpFileName))
+                {
+                    packingSizeLookUpTable = GetDataTableFromCSVFile(packingSizeLookUpFileName);
+                }
+
+                //Read Vendor RAw File
+                DataTable rawInventory = GetDataTableFromCSVFile(txtVendorFile.Text);
+
+                //// Requirement #2
+                //DataColumn stockCol = rawInventory.Columns.Add("Stock", typeof(Int32));
+                //stockCol.Expression = "Convert(IIF(Qty='','0',Qty), 'System.Int32') - Convert(IIF(PreSold='','0',PreSold), 'System.Int32')";
+
+                // Requirement #1 a & #1 b - Selected Categories
+                DataRow[] selectedRawInventory = rawInventory.Select("Category IN ('cricket', 'sporting items') AND SubCategory NOT IN ('carrom - accessories','clearance items','volleyball equipment','speciality order items')");
+
+                foreach(DataRow row in selectedRawInventory)
+                {
+                    // Requirement #2 a Stock
+                    int stock; int qty; int preSold;
+                    Int32.TryParse(row["Qty"] == null ? "0" : row["Qty"].ToString(), out qty);
+                    Int32.TryParse(row["PreSold"] == null ? "0" : row["PreSold"].ToString(), out preSold);
+                    stock = qty - preSold;
+
+                    // Requirement #2 c Units Per Case and Stock
+                    int unitsPerCase = 0; decimal finalSuggestedPrice = 0; decimal suggestedPrice = 0;
+                    Int32.TryParse(row["UnitsPerCase"] == null ? "0" : row["UnitsPerCase"].ToString(), out unitsPerCase);
+                    if(unitsPerCase > 1)
+                    {
+                        stock = stock / unitsPerCase;
+                        string strSuggestedPrice = row["SuggestedPrice"] == null ? "0" : row["SuggestedPrice"].ToString();
+                        strSuggestedPrice = strSuggestedPrice.Replace("$","");
+                        Decimal.TryParse(strSuggestedPrice, out suggestedPrice);
+                        finalSuggestedPrice = stock * suggestedPrice;
+                    }
+
+                    // Requirement #3 - Brand Id
+                    string brandId = string.Empty; string brandName = string.Empty;
+                    brandName = row["Brand"] == null ? string.Empty : row["Brand"].ToString();
+                    DataRow[] brandRows = brandsTable.Select("ReplaceWith = '" + brandName + "'");
+                    if(brandRows != null && brandRows.Length > 0)
+                    {
+                        brandId = brandRows[0]["FindWord"].ToString();
+                    }
+
+                    // Requirement #2 b - Status
+                    string status = "publish";
+                    if (stock <= 0 || string.IsNullOrEmpty(brandId))
+                    {
+                        status = "Draft";
+                    }
+
+                    // Requirement #4 a - Body Protector
+                    string category = row["SubCategory"] == null ? string.Empty : row["SubCategory"].ToString();
+                    bool bodyProtectorCategory = false;
+                    if(category.StartsWith("BODY PROTECTOR"))
+                    {
+                        bodyProtectorCategory = true;
+                    }
+
+                    // Requirement #4 b - Category
+                    string subCategory = string.Empty;
+                    DataRow[] categoryRows = productNamePhraseTable.Select("FindWord = '" + category + "'");
+                    if (categoryRows != null && categoryRows.Length > 0)
+                    {
+                        category = categoryRows[0]["ReplaceWith"] == null? string.Empty : categoryRows[0]["ReplaceWith"].ToString();
+                        // Requirement #4 c - SubCategory
+                        subCategory = categoryRows[0]["DisplayName"] == null ? string.Empty : categoryRows[0]["DisplayName"].ToString();
+                    }
+                    
+                    // Requirement #5 - Range 
+                    string description = row["Description"] == null ? string.Empty : row["Description"].ToString();
+                    string[] rangeWords = description.Split(" ".ToCharArray());
+                    string rangeName = string.Empty; string brandNm = string.Empty;
+                    if (rangeWords != null && rangeWords.Length > 0)
+                    {
+                        for (int i = 0; i < rangeWords.Length - 1; i++)
+                        {
+                            DataRow[] rangeLookupRows = RangeLookupMasterTable.Select("Brand = '" + rangeWords[i] + "' and RangeLookupWord = '" + rangeWords[i+1] + "'");
+                            if (rangeLookupRows != null && rangeLookupRows.Length > 0)
+                            {
+                                brandNm = rangeWords[i];
+                                rangeName = rangeLookupRows[0]["RangeAssignValue"] == null ? string.Empty : rangeLookupRows[0]["RangeAssignValue"].ToString();
+                                break;
+                            }
+                        }
+                    }
+
+                    // Requirement #6 - Residual Text
+                    string residualText = string.Empty; string categoryLevel = string.Empty; string productName = string.Empty;
+                    if(bodyProtectorCategory)
+                    {
+                        residualText = description.Substring(description.IndexOf(brandNm));
+                        // Requirement #7 b
+                        categoryLevel = category;
+                        if (!string.IsNullOrEmpty(subCategory))
+                        {
+                            categoryLevel += ">" + subCategory;
+                        }
+                        if (!string.IsNullOrEmpty(brandName))
+                        {
+                            categoryLevel += ">" + brandName;
+                        }
+                        // Requirement #8 b
+                        productName = brandName;
+                        if (!string.IsNullOrEmpty(residualText))
+                        {
+                            productName += " " + residualText;
+                        }
+                        if (!string.IsNullOrEmpty(subCategory))
+                        {
+                            productName += " " + subCategory;
+                        }
+                    }
+                    else
+                    {
+                        residualText = description.Substring(description.IndexOf(rangeName));
+                        // Requirement #7 a
+                        categoryLevel = subCategory;
+                        if (!string.IsNullOrEmpty(brandName))
+                        {
+                            categoryLevel += ">" + brandName;
+                        }
+                        if (!string.IsNullOrEmpty(rangeName))
+                        {
+                            categoryLevel += ">" + rangeName;
+                        }
+                        // Requirement #8 a
+                        productName = brandName;
+                        if(!string.IsNullOrEmpty(rangeName))
+                        {
+                            productName += " " + rangeName;
+                        }
+                        if(!string.IsNullOrEmpty(residualText))
+                        {
+                            productName += " " + residualText;
+                        }
+                        if(!string.IsNullOrEmpty(category))
+                        {
+                            productName += " " + category;
+                        }
+                    }
+
+                    //Requirement #9
+                    string packingSize = string.Empty;
+                    packingSize = row["PackingSize"] == null ? string.Empty : row["PackingSize"].ToString();
+                    DataRow[] packingSizeRows = packingSizeLookUpTable.Select("SubCategory = '" + subCategory + "' and PackingSize = '" + packingSize + "'");
+                    if (packingSizeRows != null && packingSizeRows.Length > 0)
+                    {
+                        packingSize = packingSizeRows[0]["NewSize"] == null ? string.Empty : packingSizeRows[0]["NewSize"].ToString();
+                    }
+
+                    // Requirement # 11 - Meta Keywords
+                    string metaKeyword = productName.Replace(" ", ",");
+
+
+                }
+            }
+
+        }
+
+
+        
+        
     }
 }
