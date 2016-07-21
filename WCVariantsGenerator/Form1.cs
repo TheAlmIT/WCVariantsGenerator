@@ -350,6 +350,10 @@ namespace WCVariantsGenerator
 
         private void WriteLineToFile(string filePath, string strToWrite)
         {
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Close();
+            }
             using (StreamWriter sw = File.AppendText(filePath))
             {
                 sw.WriteLine(strToWrite);
@@ -594,28 +598,28 @@ namespace WCVariantsGenerator
         {
             if (!string.IsNullOrEmpty(txtVendorFile.Text))
             {
-                DataTable rawTable = GetDataTableFromCSVFile(txtFileName.Text);
+                //DataTable rawTable = GetDataTableFromCSVFile(txtVendorFile.Text);
                 string brandMasterFileName = System.Configuration.ConfigurationManager.AppSettings["BrandMasterFile"];
                 DataTable brandsTable = new DataTable();
-                if (String.IsNullOrEmpty(brandMasterFileName))
+                if (!String.IsNullOrEmpty(brandMasterFileName))
                 {
                     brandsTable = GetDataTableFromCSVFile(brandMasterFileName);
                 }
                 string rangeLookupMasterFileName = System.Configuration.ConfigurationManager.AppSettings["RangeLookupMasterFileName"];
                 DataTable RangeLookupMasterTable = new DataTable();
-                if (String.IsNullOrEmpty(rangeLookupMasterFileName))
+                if (!String.IsNullOrEmpty(rangeLookupMasterFileName))
                 {
                     RangeLookupMasterTable = GetDataTableFromCSVFile(rangeLookupMasterFileName);
                 }
                 string productNamePhraseFileName = System.Configuration.ConfigurationManager.AppSettings["ProductNamePhraseFileName"];
                 DataTable productNamePhraseTable = new DataTable();
-                if (String.IsNullOrEmpty(productNamePhraseFileName))
+                if (!String.IsNullOrEmpty(productNamePhraseFileName))
                 {
                     productNamePhraseTable = GetDataTableFromCSVFile(productNamePhraseFileName);
                 }
                 string packingSizeLookUpFileName = System.Configuration.ConfigurationManager.AppSettings["PackingSizeLookUpFileName"];
                 DataTable packingSizeLookUpTable = new DataTable();
-                if (String.IsNullOrEmpty(packingSizeLookUpFileName))
+                if (!String.IsNullOrEmpty(packingSizeLookUpFileName))
                 {
                     packingSizeLookUpTable = GetDataTableFromCSVFile(packingSizeLookUpFileName);
                 }
@@ -629,13 +633,14 @@ namespace WCVariantsGenerator
 
                 // Requirement #1 a & #1 b - Selected Categories
                 DataRow[] selectedRawInventory = rawInventory.Select("Category IN ('cricket', 'sporting items') AND SubCategory NOT IN ('carrom - accessories','clearance items','volleyball equipment','speciality order items')");
-
+                string wooCommerceInputFilePath = ConfigurationManager.AppSettings["WoocommerceInputFilePath"] + string.Format("{0}.csv", DateTime.Now.ToString("MMddyyyy_hhmmss"));
+                WriteLineToFile(wooCommerceInputFilePath, "'post_title','post_name','post_excerpt','post_content','post_status','menu_order','post_date','parent_sku','post_author','comment_status','sku','downloadable','virtual','visibility','stock','stock_status','backorders','manage_stock','regular_price','sale_price','weight','length','width','height','tax_status','tax_class','upsell_ids','crosssell_ids','featured','sale_price_dates_from','sale_price_dates_to','download_limit','download_expiry','product_url','button_text','meta:_yoast_wpseo_focuskw','meta:_yoast_wpseo_title','meta:_yoast_wpseo_metadesc','meta:_yoast_wpseo_metakeywords','images','downloadable_files','tax:product_brand','tax:product_type','tax:product_cat','tax:product_tag','tax:product_shipping_class','meta:_amazon_bullet_point1','meta:_amazon_bullet_point2','meta:_amazon_bullet_point3','meta:_amazon_bullet_point4','meta:_amazon_bullet_point5','meta:_amazon_condition_note','meta:_amazon_condition_type','meta:_amazon_generic_keywords1','meta:_amazon_generic_keywords2','meta:_amazon_generic_keywords3','meta:_amazon_generic_keywords4','meta:_amazon_generic_keywords5','meta:_amazon_id_type','meta:_amazon_maximum_price','meta:_amazon_minimum_price','meta:_amazon_price','meta:_amazon_product_description','meta:_amazon_product_id','meta:_amazon_title','meta:_crosssell_skus','meta:_file_path','meta:_max_price_variation_id','meta:_max_regular_price_variation_id','meta:_max_sale_price_variation_id','meta:_min_price_variation_id','meta:_min_regular_price_variation_id','meta:_min_sale_price_variation_id','meta:_msrp','meta:_msrp_price','meta:_oembed_2782cce4c94e0d16311bb7c9fe3cff18','meta:_oembed_5e91f520fb631ea96e4657dcd9220a01','meta:_oembed_c8d6c035b7a6cd9becee24853b371119','meta:_oembed_time_2782cce4c94e0d16311bb7c9fe3cff18','meta:_oembed_time_5e91f520fb631ea96e4657dcd9220a01','meta:_product_version','meta:_purchase_note','meta:_sold_individually','meta:_thumbnail_id','meta:_upsell_skus','meta:_video_url','meta:_wpla_asin','meta:_wpla_custom_feed_columns','meta:_wpla_custom_feed_tpl_id','meta:_wpla_disabled_gallery_images','meta:oswadmarket_custom_product_config','meta:slide_template','meta:total_sales','meta:yoast_wpseo_focuskw','meta:yoast_wpseo_metadesc','meta:yoast_wpseo_metakeywords','meta:yoast_wpseo_title','attribute:SIZE','attribute_data:SIZE','attribute_default:SIZE','attribute:pa_size','attribute_data:pa_size','attribute_default:pa_size'");
                 foreach(DataRow row in selectedRawInventory)
                 {
                     // Requirement #2 a Stock
                     int stock; int qty; int preSold;
-                    Int32.TryParse(row["Qty"] == null ? "0" : row["Qty"].ToString(), out qty);
-                    Int32.TryParse(row["PreSold"] == null ? "0" : row["PreSold"].ToString(), out preSold);
+                    qty = Convert.ToInt32(Convert.ToDouble(row["Qty"] == null || row["Qty"].ToString() == string.Empty ? "0" : row["Qty"].ToString()));
+                    preSold = Convert.ToInt32(Convert.ToDouble(row["PreSold"] == null || row["PreSold"].ToString() == string.Empty ? "0" : row["PreSold"].ToString()));
                     stock = qty - preSold;
 
                     // Requirement #2 c Units Per Case and Stock
@@ -648,6 +653,12 @@ namespace WCVariantsGenerator
                         strSuggestedPrice = strSuggestedPrice.Replace("$","");
                         Decimal.TryParse(strSuggestedPrice, out suggestedPrice);
                         finalSuggestedPrice = stock * suggestedPrice;
+                    }
+                    else
+                    {
+                        string strSuggestedPrice = row["SuggestedPrice"] == null ? "0" : row["SuggestedPrice"].ToString();
+                        strSuggestedPrice = strSuggestedPrice.Replace("$", "");
+                        Decimal.TryParse(strSuggestedPrice, out finalSuggestedPrice);
                     }
 
                     // Requirement #3 - Brand Id
@@ -686,16 +697,21 @@ namespace WCVariantsGenerator
                     
                     // Requirement #5 - Range 
                     string description = row["Description"] == null ? string.Empty : row["Description"].ToString();
+                    description = description.Replace("  ", " ");
                     string[] rangeWords = description.Split(" ".ToCharArray());
                     string rangeName = string.Empty; string brandNm = string.Empty;
                     if (rangeWords != null && rangeWords.Length > 0)
                     {
                         for (int i = 0; i < rangeWords.Length - 1; i++)
                         {
-                            DataRow[] rangeLookupRows = RangeLookupMasterTable.Select("Brand = '" + rangeWords[i] + "' and RangeLookupWord = '" + rangeWords[i+1] + "'");
+                            string brandLookup = rangeWords[i];
+                            brandLookup = brandLookup.Replace("'", "''");
+                            string rangeLookup = rangeWords[i + 1];
+                            rangeLookup = rangeLookup.Replace("'", "''");
+                            DataRow[] rangeLookupRows = RangeLookupMasterTable.Select("Brand = '" + brandLookup + "' and RangeLookupWord = '" + rangeLookup + "'");
                             if (rangeLookupRows != null && rangeLookupRows.Length > 0)
                             {
-                                brandNm = rangeWords[i];
+                                brandNm = brandLookup;
                                 rangeName = rangeLookupRows[0]["RangeAssignValue"] == null ? string.Empty : rangeLookupRows[0]["RangeAssignValue"].ToString();
                                 break;
                             }
@@ -706,16 +722,17 @@ namespace WCVariantsGenerator
                     string residualText = string.Empty; string categoryLevel = string.Empty; string productName = string.Empty;
                     if(bodyProtectorCategory)
                     {
-                        residualText = description.Substring(description.IndexOf(brandNm));
+                        residualText = description.Substring(description.IndexOf(brandId, StringComparison.CurrentCultureIgnoreCase) + brandId.Length);
+                        residualText = residualText.Trim();
                         // Requirement #7 b
                         categoryLevel = category;
-                        if (!string.IsNullOrEmpty(subCategory))
+                        if (!string.IsNullOrEmpty(subCategory) || subCategory != "NULL")
                         {
-                            categoryLevel += ">" + subCategory;
+                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? subCategory : categoryLevel + ">" + subCategory;
                         }
                         if (!string.IsNullOrEmpty(brandName))
                         {
-                            categoryLevel += ">" + brandName;
+                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? brandName : categoryLevel + ">" + brandName;
                         }
                         // Requirement #8 b
                         productName = brandName;
@@ -730,16 +747,24 @@ namespace WCVariantsGenerator
                     }
                     else
                     {
-                        residualText = description.Substring(description.IndexOf(rangeName));
+                        if (string.IsNullOrEmpty(rangeName))
+                        {
+                            residualText = description.Substring(description.IndexOf(brandId, StringComparison.CurrentCultureIgnoreCase) + brandId.Length);
+                        }
+                        else
+                        {
+                            residualText = description.Substring(description.IndexOf(rangeName, StringComparison.CurrentCultureIgnoreCase) + rangeName.Length);
+                        }
+                        residualText = residualText.Trim();
                         // Requirement #7 a
-                        categoryLevel = subCategory;
+                        categoryLevel = string.IsNullOrEmpty(subCategory) || subCategory.ToUpper() == "NULL" ? string.Empty : subCategory ;
                         if (!string.IsNullOrEmpty(brandName))
                         {
-                            categoryLevel += ">" + brandName;
+                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? brandName : categoryLevel + ">" + brandName;
                         }
                         if (!string.IsNullOrEmpty(rangeName))
                         {
-                            categoryLevel += ">" + rangeName;
+                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? rangeName : categoryLevel + ">" + rangeName;
                         }
                         // Requirement #8 a
                         productName = brandName;
@@ -760,6 +785,10 @@ namespace WCVariantsGenerator
                     //Requirement #9
                     string packingSize = string.Empty;
                     packingSize = row["PackingSize"] == null ? string.Empty : row["PackingSize"].ToString();
+                    if(!string.IsNullOrEmpty(packingSize))
+                    {
+                        packingSize = packingSize.Replace("'", "''");
+                    }
                     DataRow[] packingSizeRows = packingSizeLookUpTable.Select("SubCategory = '" + subCategory + "' and PackingSize = '" + packingSize + "'");
                     if (packingSizeRows != null && packingSizeRows.Length > 0)
                     {
@@ -769,7 +798,14 @@ namespace WCVariantsGenerator
                     // Requirement # 11 - Meta Keywords
                     string metaKeyword = productName.Replace(" ", ",");
 
-
+                    WriteLineToFile(wooCommerceInputFilePath, productName + "," + productName.Replace(" ", "-") + ",," + row["Description"] + "," + status 
+                        + ",0," + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss") + ","
+                        + row["SKU"] + ", 1, open," + row["SKU"] + "no, no, visible," + stock + ", instock', no, no,"
+                        + String.Format("{0:.00}", finalSuggestedPrice) + "," + String.Format("{0:.00}", finalSuggestedPrice) + "," + row["CaseLB"] + "," + row["CaseLength"] + "," + row["CaseWidth"] + "," + row["CaseHeight"]
+                        + "taxable, ,1,1,no,,,,,,," + productName + "," + productName + "," + metaKeyword + ",,"
+                        + brandName + ", simple," + categoryLevel + ",,,,,,,,NEW," + brandName + "," + rangeName + "," + residualText + "," + category
+                        + ", UPC,,," + String.Format("{0:.00}", finalSuggestedPrice) + "," + productName + "," + row["UnitUPC"] + "," + productName + ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,," 
+                        + productName + "," + metaKeyword + "," + productName + "," + packingSize + ",,," + packingSize + ",1|1|1,,"); 
                 }
             }
 
