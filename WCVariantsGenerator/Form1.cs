@@ -632,10 +632,12 @@ namespace WCVariantsGenerator
                 //stockCol.Expression = "Convert(IIF(Qty='','0',Qty), 'System.Int32') - Convert(IIF(PreSold='','0',PreSold), 'System.Int32')";
 
                 // Requirement #1 a & #1 b - Selected Categories
+                rawInventory.DefaultView.Sort = "Brand, Description";
+                rawInventory = rawInventory.DefaultView.ToTable();
                 DataRow[] selectedRawInventory = rawInventory.Select("Category IN ('cricket', 'sporting items') AND SubCategory NOT IN ('carrom - accessories','clearance items','volleyball equipment','speciality order items')");
                 string wooCommerceInputFilePath = ConfigurationManager.AppSettings["WoocommerceInputFilePath"] + string.Format("{0}.csv", DateTime.Now.ToString("MMddyyyy_hhmmss"));
-                WriteLineToFile(wooCommerceInputFilePath, "'post_title','post_name','post_excerpt','post_content','post_status','menu_order','post_date','parent_sku','post_author','comment_status','sku','downloadable','virtual','visibility','stock','stock_status','backorders','manage_stock','regular_price','sale_price','weight','length','width','height','tax_status','tax_class','upsell_ids','crosssell_ids','featured','sale_price_dates_from','sale_price_dates_to','download_limit','download_expiry','product_url','button_text','meta:_yoast_wpseo_focuskw','meta:_yoast_wpseo_title','meta:_yoast_wpseo_metadesc','meta:_yoast_wpseo_metakeywords','images','downloadable_files','tax:product_brand','tax:product_type','tax:product_cat','tax:product_tag','tax:product_shipping_class','meta:_amazon_bullet_point1','meta:_amazon_bullet_point2','meta:_amazon_bullet_point3','meta:_amazon_bullet_point4','meta:_amazon_bullet_point5','meta:_amazon_condition_note','meta:_amazon_condition_type','meta:_amazon_generic_keywords1','meta:_amazon_generic_keywords2','meta:_amazon_generic_keywords3','meta:_amazon_generic_keywords4','meta:_amazon_generic_keywords5','meta:_amazon_id_type','meta:_amazon_maximum_price','meta:_amazon_minimum_price','meta:_amazon_price','meta:_amazon_product_description','meta:_amazon_product_id','meta:_amazon_title','meta:_crosssell_skus','meta:_file_path','meta:_max_price_variation_id','meta:_max_regular_price_variation_id','meta:_max_sale_price_variation_id','meta:_min_price_variation_id','meta:_min_regular_price_variation_id','meta:_min_sale_price_variation_id','meta:_msrp','meta:_msrp_price','meta:_oembed_2782cce4c94e0d16311bb7c9fe3cff18','meta:_oembed_5e91f520fb631ea96e4657dcd9220a01','meta:_oembed_c8d6c035b7a6cd9becee24853b371119','meta:_oembed_time_2782cce4c94e0d16311bb7c9fe3cff18','meta:_oembed_time_5e91f520fb631ea96e4657dcd9220a01','meta:_product_version','meta:_purchase_note','meta:_sold_individually','meta:_thumbnail_id','meta:_upsell_skus','meta:_video_url','meta:_wpla_asin','meta:_wpla_custom_feed_columns','meta:_wpla_custom_feed_tpl_id','meta:_wpla_disabled_gallery_images','meta:oswadmarket_custom_product_config','meta:slide_template','meta:total_sales','meta:yoast_wpseo_focuskw','meta:yoast_wpseo_metadesc','meta:yoast_wpseo_metakeywords','meta:yoast_wpseo_title','attribute:SIZE','attribute_data:SIZE','attribute_default:SIZE','attribute:pa_size','attribute_data:pa_size','attribute_default:pa_size'");
-                foreach(DataRow row in selectedRawInventory)
+                WriteLineToFile(wooCommerceInputFilePath, "post_title,post_name,post_excerpt,post_content,post_status,menu_order,post_date,parent_sku,post_author,comment_status,sku,downloadable,virtual,visibility,stock,stock_status,backorders,manage_stock,regular_price,sale_price,weight,length,width,height,tax_status,tax_class,upsell_ids,crosssell_ids,featured,sale_price_dates_from,sale_price_dates_to,download_limit,download_expiry,product_url,button_text,meta:_yoast_wpseo_focuskw,meta:_yoast_wpseo_title,meta:_yoast_wpseo_metadesc,meta:_yoast_wpseo_metakeywords,images,downloadable_files,tax:product_brand,tax:product_type,tax:product_cat,tax:product_tag,tax:product_shipping_class,meta:_amazon_bullet_point1,meta:_amazon_bullet_point2,meta:_amazon_bullet_point3,meta:_amazon_bullet_point4,meta:_amazon_bullet_point5,meta:_amazon_condition_note,meta:_amazon_condition_type,meta:_amazon_generic_keywords1,meta:_amazon_generic_keywords2,meta:_amazon_generic_keywords3,meta:_amazon_generic_keywords4,meta:_amazon_generic_keywords5,meta:_amazon_id_type,meta:_amazon_maximum_price,meta:_amazon_minimum_price,meta:_amazon_price,meta:_amazon_product_description,meta:_amazon_product_id,meta:_amazon_title,meta:_crosssell_skus,meta:_file_path,meta:_max_price_variation_id,meta:_max_regular_price_variation_id,meta:_max_sale_price_variation_id,meta:_min_price_variation_id,meta:_min_regular_price_variation_id,meta:_min_sale_price_variation_id,meta:_msrp,meta:_msrp_price,meta:_oembed_2782cce4c94e0d16311bb7c9fe3cff18,meta:_oembed_5e91f520fb631ea96e4657dcd9220a01,meta:_oembed_c8d6c035b7a6cd9becee24853b371119,meta:_oembed_time_2782cce4c94e0d16311bb7c9fe3cff18,meta:_oembed_time_5e91f520fb631ea96e4657dcd9220a01,meta:_product_version,meta:_purchase_note,meta:_sold_individually,meta:_thumbnail_id,meta:_upsell_skus,meta:_video_url,meta:_wpla_asin,meta:_wpla_custom_feed_columns,meta:_wpla_custom_feed_tpl_id,meta:_wpla_disabled_gallery_images,meta:oswadmarket_custom_product_config,meta:slide_template,meta:total_sales,meta:yoast_wpseo_focuskw,meta:yoast_wpseo_metadesc,meta:yoast_wpseo_metakeywords,meta:yoast_wpseo_title,attribute:SIZE,attribute_data:SIZE,attribute_default:SIZE,attribute:pa_size,attribute_data:pa_size,attribute_default:pa_size");
+                foreach (DataRow row in selectedRawInventory)
                 {
                     // Requirement #2 a Stock
                     int stock; int qty; int preSold;
@@ -646,11 +648,11 @@ namespace WCVariantsGenerator
                     // Requirement #2 c Units Per Case and Stock
                     int unitsPerCase = 0; decimal finalSuggestedPrice = 0; decimal suggestedPrice = 0;
                     Int32.TryParse(row["UnitsPerCase"] == null ? "0" : row["UnitsPerCase"].ToString(), out unitsPerCase);
-                    if(unitsPerCase > 1)
+                    if (unitsPerCase > 1)
                     {
                         stock = stock / unitsPerCase;
                         string strSuggestedPrice = row["SuggestedPrice"] == null ? "0" : row["SuggestedPrice"].ToString();
-                        strSuggestedPrice = strSuggestedPrice.Replace("$","");
+                        strSuggestedPrice = strSuggestedPrice.Replace("$", "");
                         Decimal.TryParse(strSuggestedPrice, out suggestedPrice);
                         finalSuggestedPrice = stock * suggestedPrice;
                     }
@@ -665,7 +667,7 @@ namespace WCVariantsGenerator
                     string brandId = string.Empty; string brandName = string.Empty;
                     brandName = row["Brand"] == null ? string.Empty : row["Brand"].ToString();
                     DataRow[] brandRows = brandsTable.Select("ReplaceWith = '" + brandName + "'");
-                    if(brandRows != null && brandRows.Length > 0)
+                    if (brandRows != null && brandRows.Length > 0)
                     {
                         brandId = brandRows[0]["FindWord"].ToString();
                     }
@@ -680,7 +682,7 @@ namespace WCVariantsGenerator
                     // Requirement #4 a - Body Protector
                     string category = row["SubCategory"] == null ? string.Empty : row["SubCategory"].ToString();
                     bool bodyProtectorCategory = false;
-                    if(category.StartsWith("BODY PROTECTOR"))
+                    if (category.StartsWith("BODY PROTECTOR"))
                     {
                         bodyProtectorCategory = true;
                     }
@@ -690,11 +692,11 @@ namespace WCVariantsGenerator
                     DataRow[] categoryRows = productNamePhraseTable.Select("FindWord = '" + category + "'");
                     if (categoryRows != null && categoryRows.Length > 0)
                     {
-                        category = categoryRows[0]["ReplaceWith"] == null? string.Empty : categoryRows[0]["ReplaceWith"].ToString();
+                        category = categoryRows[0]["ReplaceWith"] == null ? string.Empty : categoryRows[0]["ReplaceWith"].ToString();
                         // Requirement #4 c - SubCategory
                         subCategory = categoryRows[0]["DisplayName"] == null ? string.Empty : categoryRows[0]["DisplayName"].ToString();
                     }
-                    
+
                     // Requirement #5 - Range 
                     string description = row["Description"] == null ? string.Empty : row["Description"].ToString();
                     description = description.Replace("  ", " ");
@@ -719,8 +721,8 @@ namespace WCVariantsGenerator
                     }
 
                     // Requirement #6 - Residual Text
-                    string residualText = string.Empty; string categoryLevel = string.Empty; string productName = string.Empty;
-                    if(bodyProtectorCategory)
+                    string residualText = string.Empty; string categoryLevel = string.Empty; string productName = string.Empty; string metaKeyword = string.Empty;
+                    if (bodyProtectorCategory)
                     {
                         residualText = description.Substring(description.IndexOf(brandId, StringComparison.CurrentCultureIgnoreCase) + brandId.Length);
                         residualText = residualText.Trim();
@@ -728,21 +730,25 @@ namespace WCVariantsGenerator
                         categoryLevel = category;
                         if (!string.IsNullOrEmpty(subCategory) || subCategory != "NULL")
                         {
-                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? subCategory : categoryLevel + ">" + subCategory;
+                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? subCategory : categoryLevel + " > " + subCategory;
                         }
                         if (!string.IsNullOrEmpty(brandName))
                         {
-                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? brandName : categoryLevel + ">" + brandName;
+                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? brandName : categoryLevel + " > " + brandName;
                         }
                         // Requirement #8 b
-                        productName = brandName;
+                        metaKeyword = productName = brandName;
                         if (!string.IsNullOrEmpty(residualText))
                         {
                             productName += " " + residualText;
+                            // Requirement # 11 - Meta Keywords
+                            metaKeyword += "," + residualText;
                         }
                         if (!string.IsNullOrEmpty(subCategory))
                         {
                             productName += " " + subCategory;
+                            // Requirement # 11 - Meta Keywords
+                            metaKeyword += " " + subCategory;
                         }
                     }
                     else
@@ -757,35 +763,42 @@ namespace WCVariantsGenerator
                         }
                         residualText = residualText.Trim();
                         // Requirement #7 a
-                        categoryLevel = string.IsNullOrEmpty(subCategory) || subCategory.ToUpper() == "NULL" ? string.Empty : subCategory ;
+                        categoryLevel = category;
                         if (!string.IsNullOrEmpty(brandName))
                         {
-                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? brandName : categoryLevel + ">" + brandName;
+                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? brandName : categoryLevel + " > " + brandName;
                         }
                         if (!string.IsNullOrEmpty(rangeName))
                         {
-                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? rangeName : categoryLevel + ">" + rangeName;
+                            categoryLevel = string.IsNullOrEmpty(categoryLevel) ? rangeName : categoryLevel + " > " + rangeName;
                         }
                         // Requirement #8 a
-                        productName = brandName;
-                        if(!string.IsNullOrEmpty(rangeName))
+                        // Requirement # 11 - Meta Keywords
+                        metaKeyword = productName = brandName;
+                        if (!string.IsNullOrEmpty(rangeName))
                         {
                             productName += " " + rangeName;
+                            // Requirement # 11 - Meta Keywords
+                            metaKeyword += "," + rangeName;
                         }
-                        if(!string.IsNullOrEmpty(residualText))
+                        if (!string.IsNullOrEmpty(residualText))
                         {
                             productName += " " + residualText;
+                            // Requirement # 11 - Meta Keywords
+                            metaKeyword += "," + residualText;
                         }
-                        if(!string.IsNullOrEmpty(category))
+                        if (!string.IsNullOrEmpty(category))
                         {
                             productName += " " + category;
+                            // Requirement # 11 - Meta Keywords
+                            metaKeyword += "," + category;
                         }
                     }
 
                     //Requirement #9
                     string packingSize = string.Empty;
                     packingSize = row["PackingSize"] == null ? string.Empty : row["PackingSize"].ToString();
-                    if(!string.IsNullOrEmpty(packingSize))
+                    if (!string.IsNullOrEmpty(packingSize))
                     {
                         packingSize = packingSize.Replace("'", "''");
                     }
@@ -795,18 +808,22 @@ namespace WCVariantsGenerator
                         packingSize = packingSizeRows[0]["NewSize"] == null ? string.Empty : packingSizeRows[0]["NewSize"].ToString();
                     }
 
-                    // Requirement # 11 - Meta Keywords
-                    string metaKeyword = productName.Replace(" ", ",");
+                    //string metaKeyword = productName.Replace(" ", ",");
 
-                    WriteLineToFile(wooCommerceInputFilePath, productName + "," + productName.Replace(" ", "-") + ",," + row["Description"] + "," + status 
+                    WriteLineToFile(wooCommerceInputFilePath, productName + "," + productName.Replace(" ", "-") + ",," + row["Description"] + "," + status
                         + ",0," + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss") + ","
-                        + row["SKU"] + ", 1, open," + row["SKU"] + "no, no, visible," + stock + ", instock', no, no,"
+                        + row["SKU"] + ", 1, open," + row["SKU"] + ",no, no, visible," + stock + ", instock, no, no,"
                         + String.Format("{0:.00}", finalSuggestedPrice) + "," + String.Format("{0:.00}", finalSuggestedPrice) + "," + row["CaseLB"] + "," + row["CaseLength"] + "," + row["CaseWidth"] + "," + row["CaseHeight"]
-                        + "taxable, ,1,1,no,,,,,,," + productName + "," + productName + "," + metaKeyword + ",,"
-                        + brandName + ", simple," + categoryLevel + ",,,,,,,,NEW," + brandName + "," + rangeName + "," + residualText + "," + category
-                        + ", UPC,,," + String.Format("{0:.00}", finalSuggestedPrice) + "," + productName + "," + row["UnitUPC"] + "," + productName + ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,," 
-                        + productName + "," + metaKeyword + "," + productName + "," + packingSize + ",,," + packingSize + ",1|1|1,,"); 
+                        + ",taxable, ,1,1,no,,,,,,," + productName + "," + productName + "," + "\"" + metaKeyword + "\"" + ",,,,"
+                        + brandName + ",simple," +  categoryLevel + ",,,,,,,,,NEW," + brandName + "," + rangeName + "," + residualText + "," + category
+                        + ",,UPC,,," + String.Format("{0:.00}", finalSuggestedPrice) + "," + productName + "," + row["UnitUPC"] + "," + productName + ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+                        + productName + "," + "\"" + metaKeyword + "\"" + "," + productName + "," + packingSize + ",,," + packingSize + ",1|1|1,,");
                 }
+                MessageBox.Show(string.Format("Generated File {0} Successfully", wooCommerceInputFilePath));
+            }
+            else
+            {
+                MessageBox.Show("Select Vendor Raw Inventory");
             }
 
         }
