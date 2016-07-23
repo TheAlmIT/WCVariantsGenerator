@@ -808,7 +808,10 @@ namespace WCVariantsGenerator
                         packingSize = packingSizeRows[0]["NewSize"] == null ? string.Empty : packingSizeRows[0]["NewSize"].ToString();
                     }
 
-                    //string metaKeyword = productName.Replace(" ", ",");
+                    productName = productName.Replace("\"", "");
+                    metaKeyword = metaKeyword.Replace("\"", "");
+                    productName = productName.Replace("'", "");
+                    metaKeyword = metaKeyword.Replace("'", "");
 
                     WriteLineToFile(wooCommerceInputFilePath, productName + "," + productName.Replace(" ", "-") + ",," + row["Description"] + "," + status
                         + ",0," + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss") + ","
@@ -817,7 +820,7 @@ namespace WCVariantsGenerator
                         + ",taxable, ,1,1,no,,,,,,," + productName + "," + productName + "," + "\"" + metaKeyword + "\"" + ",,,,"
                         + brandName + ",simple," +  categoryLevel + ",,,,,,,,,NEW," + brandName + "," + rangeName + "," + residualText + "," + category
                         + ",,UPC,,," + String.Format("{0:.00}", finalSuggestedPrice) + "," + productName + "," + row["UnitUPC"] + "," + productName + ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
-                        + productName + "," + "\"" + metaKeyword + "\"" + "," + productName + "," + packingSize + ",,," + packingSize + ",1|1|1,,");
+                        + productName + "," + "\"" + metaKeyword + "\"" + "," + productName + "," + packingSize + ",,," + packingSize + ",1|1|1,");
                 }
                 MessageBox.Show(string.Format("Generated File {0} Successfully", wooCommerceInputFilePath));
             }
